@@ -17,6 +17,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -55,16 +56,21 @@ public class Office extends AbstractPersistable<Long> {
     @Column(name = "external_id", length = 100)
     private String externalId;
 
-    public static Office headOffice(final String name, final LocalDate openingDate, final String externalId) {
-        return new Office(null, name, openingDate, externalId);
-    }
+    @OneToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "id")
+    private OfficeExt officeExt;
 
+    public static Office headOffice(final String name, final LocalDate openingDate, final String externalId) {
+        return new Office(null, name, openingDate, externalId, null);
+    }    
+    
     public static Office fromJson(final Office parentOffice, final JsonCommand command) {
 
         final String name = command.stringValueOfParameterNamed("name");
         final LocalDate openingDate = command.localDateValueOfParameterNamed("openingDate");
         final String externalId = command.stringValueOfParameterNamed("externalId");
-        return new Office(parentOffice, name, openingDate, externalId);
+        final Boolean disableAccounting = command.booleanObjectValueOfParameterNamed("disableAccounting");
+        return new Office(parentOffice, name, openingDate, externalId, disableAccounting);
     }
 
     protected Office() {
@@ -74,7 +80,7 @@ public class Office extends AbstractPersistable<Long> {
         this.externalId = null;
     }
 
-    private Office(final Office parent, final String name, final LocalDate openingDate, final String externalId) {
+    private Office(final Office parent, final String name, final LocalDate openingDate, final String externalId, final Boolean disableAccounting) {
         this.parent = parent;
         this.openingDate = openingDate.toDateTimeAtStartOfDay().toDate();
         if (parent != null) {
@@ -90,6 +96,10 @@ public class Office extends AbstractPersistable<Long> {
             this.externalId = externalId.trim();
         } else {
             this.externalId = null;
+        }
+        
+        if (this.officeExt == null) {
+        	this.officeExt = new OfficeExt(disableAccounting);
         }
     }
 
