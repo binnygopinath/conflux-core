@@ -459,6 +459,24 @@ public class CommandWrapperBuilder {
         this.href = "/clients/" + clientId + "?command=reactivate&template=true";
         return this;
     }
+    
+    public CommandWrapperBuilder createClientExtension(final Long clientId) {
+        this.actionName = "CREATEEXT";
+        this.entityName = "CLIENT";
+        this.entityId = clientId;
+        this.clientId = clientId;
+        this.href = "/clientsext/" + clientId;
+        return this;
+    }
+    
+    public CommandWrapperBuilder updateClientExtension(final Long clientId, final Long extId) {
+        this.actionName = "UPDATEEXT";
+        this.entityName = "CLIENT";
+        this.entityId = extId;
+        this.clientId = clientId;
+        this.href = "/clientsext/" + clientId + "/" + extId;
+        return this;
+    }
 
     public CommandWrapperBuilder proposeClientTransfer(final Long clientId) {
         this.actionName = "PROPOSETRANSFER";
