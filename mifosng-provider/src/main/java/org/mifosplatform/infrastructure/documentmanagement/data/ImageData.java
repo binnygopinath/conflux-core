@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,7 +26,6 @@ import org.mifosplatform.infrastructure.documentmanagement.domain.StorageType;
 
 public class ImageData {
 
-    @SuppressWarnings("unused")
     private final Long imageId;
     private final String location;
     private final Integer storageType;
@@ -33,7 +33,7 @@ public class ImageData {
 
     private File file;
     private ContentRepositoryUtils.IMAGE_FILE_EXTENSION fileExtension;
-    private InputStream inputStream;
+    private byte[] byteArray;
 
     public ImageData(final Long imageId, final String location, final Integer storageType, final String entityDisplayName) {
         this.imageId = imageId;
@@ -43,14 +43,11 @@ public class ImageData {
     }
 
     public byte[] getContent() {
-        // TODO Vishwas Fix error handling
         try {
-            if (this.inputStream == null) {
-                final FileInputStream fileInputStream = new FileInputStream(this.file);
-                return IOUtils.toByteArray(fileInputStream);
+            if (this.byteArray == null) {
+                this.byteArray = IOUtils.toByteArray(new FileInputStream(this.file));
             }
-
-            return IOUtils.toByteArray(this.inputStream);
+            return byteArray;
         } catch (final IOException e) {
             return null;
         }
@@ -66,7 +63,7 @@ public class ImageData {
 
         BufferedImage src = ImageIO.read(in);
         if (src.getWidth() <= maxWidth && src.getHeight() <= maxHeight) {
-            out.write(getContent());
+        	IOUtils.copy(in,out);
             return;
         }
         float widthRatio = (float) src.getWidth() / maxWidth;
@@ -90,9 +87,15 @@ public class ImageData {
 
     public byte[] getContentOfSize(Integer maxWidth, Integer maxHeight) {
         if (maxWidth == null && maxHeight == null) { return getContent(); }
-        FileInputStream fis = null;
+        InputStream fis = null;
         try {
-            fis = new FileInputStream(this.file);
+            if (byteArray != null) {
+                fis = new ByteArrayInputStream(byteArray);
+            }
+
+            if (fis == null) {
+                fis = new FileInputStream(this.file);
+            }
             byte[] out = resizeImage(fis, maxWidth != null ? maxWidth : Integer.MAX_VALUE, maxHeight != null ? maxHeight
                     : Integer.MAX_VALUE);
             return out;
@@ -140,12 +143,17 @@ public class ImageData {
         return this.location;
     }
 
-    public void updateContent(final InputStream objectContent) {
-        this.inputStream = objectContent;
+    public void updateContent(final byte[] byteArray) {
+        this.byteArray = byteArray;
+        setImageContentType(this.location());
     }
 
     public String getEntityDisplayName() {
         return this.entityDisplayName;
+    }
+
+    public Long getImageId() {
+        return this.imageId;
     }
 
 }
