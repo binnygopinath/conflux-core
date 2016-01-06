@@ -15,6 +15,8 @@ public class ClientApiConstants {
 
     public static final String CLIENT_RESOURCE_NAME = "client";
     public static final String CLIENT_CHARGES_RESOURCE_NAME = "CLIENTCHARGE";
+    public static final String SPOUSE_RELATIONSHIP=  "spouseRelationShip";
+
 
     // Client Charge Action Names
     public static final String CLIENT_CHARGE_ACTION_CREATE = "CREATE";
@@ -142,18 +144,56 @@ public class ClientApiConstants {
     // template related part of response
     public static final String officeOptionsParamName = "officeOptions";
     public static final String staffOptionsParamName = "staffOptions";
+    
+    
+    //Conflux specific for client ext
+    
+    public static final String CLIENT_SALUTATION = "salutation";
+    public static final String MARITAL_STATUS = "maritalStatus";
+    public static final String PROFESSION = "profession";
+    public static final String EDUCATION_QUALIFICATION = "educationQualification";
+    public static final String ANNUAL_INCOME = "annualIncome";
+    public static final String LAND_HOLDING = "landHolding";
+    public static final String HOUSE_TYPE = "houseType";
+    public static final String STATE = "state";
+    public static final String DISTRICT = "district";
+    public static final String COUNTRY = "country";
+    public static final String IDENTITY_PROOF = "identityProof";
+    public static final String ADDRESS_PROOF = "addressProof";
+    public static final String FAMILY_RELATIONSHIP = "familyrelationShip";
+    public static final String FAMILY_OCCUPATION = "familyOccupation";
+    public static final String YES_NO = "YesNo";
+    public static final String FIN_OCCUPATION = "cfaOccupation";
+    public static final String EXTERNALLOAN_STATUS = "externalLoanstatus";
+    public static final String CLIENT_ADDRESS_TYPE = "addressType";
+    public static final String PRESETLOANSOURCETYPES = "presentLoanSourceTypes";
+    public static final String PRESETLOANPURPOSETYPES = "presentLoanPurposeTypes";
+    
+    
+    //For new modified client page 
+    public static final String clientExtParamName = "clientExt";
+    public static final String familyDetailsParamName = "familyDetails";
+    public static final String naddressParamName = "naddress";
+
+    public static final String clientIdentifierDataParamName = "clientIdentifierData";
+    public static final String occupationDetailsParamName = "cfaOccupations";
+    public static final String nomineeDetailsParamName = "nomineeDetails";
+    public static final String coClientDataParamName = "coClientData";
+    
 
     public static final Set<String> CLIENT_CREATE_REQUEST_DATA_PARAMETERS = new HashSet<>(
             Arrays.asList(localeParamName, dateFormatParamName, groupIdParamName, accountNoParamName, externalIdParamName,
                     mobileNoParamName, firstnameParamName, middlenameParamName, lastnameParamName, fullnameParamName, officeIdParamName,
                     activeParamName, activationDateParamName, staffIdParamName, submittedOnDateParamName, savingsProductIdParamName,
-                    dateOfBirthParamName, genderIdParamName, clientTypeIdParamName, clientClassificationIdParamName));
+                    dateOfBirthParamName, genderIdParamName, clientTypeIdParamName, clientClassificationIdParamName, clientClassificationParamName,CLIENT_TYPE,
+                    clientExtParamName,familyDetailsParamName,naddressParamName,clientIdentifierDataParamName, occupationDetailsParamName,nomineeDetailsParamName));
 
-    public static final Set<String> CLIENT_UPDATE_REQUEST_DATA_PARAMETERS = new HashSet<>(Arrays.asList(localeParamName,
+    public static final Set<String> CLIENT_UPDATE_REQUEST_DATA_PARAMETERS = new HashSet<>(Arrays.asList(localeParamName,officeIdParamName,
             dateFormatParamName, accountNoParamName, externalIdParamName, mobileNoParamName, firstnameParamName, middlenameParamName,
 
     lastnameParamName, fullnameParamName, activeParamName, activationDateParamName, staffIdParamName, savingsProductIdParamName,
-            dateOfBirthParamName, genderIdParamName, clientTypeIdParamName, clientClassificationIdParamName, submittedOnDateParamName));
+            dateOfBirthParamName, genderIdParamName, clientTypeIdParamName, clientClassificationIdParamName, submittedOnDateParamName,
+            clientExtParamName,familyDetailsParamName,naddressParamName,clientIdentifierDataParamName, occupationDetailsParamName,nomineeDetailsParamName,coClientDataParamName));
 
     /**
      * These parameters will match the class level parameters of

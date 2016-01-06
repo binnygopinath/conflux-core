@@ -16,6 +16,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.conflux.client.ext.domain.Address;
+import org.conflux.client.ext.domain.ClientExt;
+import org.conflux.client.ext.domain.ClientExtAssembler;
+import org.conflux.client.ext.domain.Coapplicant;
+import org.conflux.client.ext.domain.FamilyDetails;
+import org.conflux.client.ext.domain.NomineeDetails;
+import org.conflux.client.ext.domain.OccupationDetails;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -73,6 +80,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 @Service
 public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWritePlatformService {
 
@@ -94,7 +105,8 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
     private final CommandProcessingService commandProcessingService;
     private final ConfigurationDomainService configurationDomainService;
     private final AccountNumberFormatRepositoryWrapper accountNumberFormatRepository;
-
+    private final ClientExtAssembler clientExtAssembler;
+    private final ClientIdentifierWritePlatformService clientIdentifierWritePlatformService;
     @Autowired
     public ClientWritePlatformServiceJpaRepositoryImpl(final PlatformSecurityContext context,
             final ClientRepositoryWrapper clientRepository, final OfficeRepository officeRepository, final NoteRepository noteRepository,
@@ -104,7 +116,9 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
             final SavingsAccountRepository savingsRepository, final SavingsProductRepository savingsProductRepository,
             final SavingsApplicationProcessWritePlatformService savingsApplicationProcessWritePlatformService,
             final CommandProcessingService commandProcessingService, final ConfigurationDomainService configurationDomainService,
-            final AccountNumberFormatRepositoryWrapper accountNumberFormatRepository) {
+            final AccountNumberFormatRepositoryWrapper accountNumberFormatRepository,
+            final ClientExtAssembler clientExtAssembler,
+            final ClientIdentifierWritePlatformService clientIdentifierWritePlatformService) {
         this.context = context;
         this.clientRepository = clientRepository;
         this.officeRepository = officeRepository;
@@ -121,6 +135,8 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
         this.commandProcessingService = commandProcessingService;
         this.configurationDomainService = configurationDomainService;
         this.accountNumberFormatRepository = accountNumberFormatRepository;
+        this.clientExtAssembler = clientExtAssembler;
+        this.clientIdentifierWritePlatformService = clientIdentifierWritePlatformService;
     }
 
     @Transactional
@@ -242,6 +258,59 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
                 newClient.updateAccountNo(accountNumberGenerator.generate(newClient, accountNumberFormat));
                 this.clientRepository.save(newClient);
             }
+            
+            
+            
+            
+            //For modified Client Page
+            final JsonObject object = new JsonParser().parse(command.json()).getAsJsonObject();
+            ClientExt clientExt = this.clientExtAssembler.assembleClientExt(command, newClient);
+            if(clientExt != null){
+            	newClient.updateClientExt(clientExt);
+            }
+            
+            //For modified Client Page Address   		
+    		final JsonArray addressArray = object.get("naddress").getAsJsonArray();
+    		if(addressArray != null){
+    			List<Address> address = this.clientExtAssembler.assembleAddress(addressArray, newClient);
+    			if(address != null && address.size() > 0){
+                	newClient.updateAddressExt(address);
+                }
+    		}
+            
+    		//For modified Client Page familyDetails    		
+    		final JsonArray familyDetailsArray = object.get("familyDetails").getAsJsonArray();
+    		if(familyDetailsArray != null){
+    			List<FamilyDetails> familyDetails = this.clientExtAssembler.assembleFamilyDetails(familyDetailsArray, newClient);
+    			if(familyDetails != null){
+                	newClient.updateFamilyDetails(familyDetails);
+                }
+    		}
+    		
+    		//For modified Client Page ClientIdentifierWritePlatformService
+    		this.clientIdentifierWritePlatformService.addClientIdentifierService(newClient, command);    		
+            
+    		//Occupation Details 
+    		final JsonArray occupationDetailsArray = object.get("cfaOccupations").getAsJsonArray();
+    		if(occupationDetailsArray != null){
+    			List<OccupationDetails> occupationDetails = this.clientExtAssembler.assembleOccupationDetails(occupationDetailsArray, newClient);
+    			if(occupationDetails != null){
+                	newClient.updateOccupationDetails(occupationDetails);
+                }
+    		}
+    		
+    		//For modified Client Page Nominee Details    		
+    		final JsonArray nomineeDetailsArray = object.get("nomineeDetails").getAsJsonArray();
+    		if(nomineeDetailsArray != null){
+    			List<NomineeDetails> nomineeDetails = this.clientExtAssembler.assembleNomineeDetails(nomineeDetailsArray, newClient);
+    			if(nomineeDetails != null){
+    				newClient.updateNomineeDetails(nomineeDetails);
+                }
+    		}
+            
+            
+            
+    	
 
             final Locale locale = command.extractLocale();
             final DateTimeFormatter fmt = DateTimeFormat.forPattern(command.dateFormat()).withLocale(locale);
@@ -250,6 +319,9 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
                 this.clientRepository.save(newClient);
             }
 
+            
+            this.clientRepository.save(newClient);
+            
             return new CommandProcessingResultBuilder() //
                     .withCommandId(command.commandId()) //
                     .withOfficeId(clientOffice.getId()) //
@@ -341,6 +413,67 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
                 }
                 clientForUpdate.updateClientClassification(newCodeVal);
             }
+            
+            
+            
+            /** Update For New Modified Client Page **/
+            final JsonObject object = new JsonParser().parse(command.json()).getAsJsonObject();  
+            //For modified client page
+            ClientExt clientExt = this.clientExtAssembler.assembleClientExt(command, clientForUpdate);
+            if(clientExt != null){
+            	clientForUpdate.updateClientExt(clientExt);
+            }
+            
+            //For For modified client page Address
+              		
+    		final JsonArray addressArray = object.get("naddress").getAsJsonArray();
+    		if(addressArray != null){
+    			List<Address> address = this.clientExtAssembler.assembleAddress(addressArray, clientForUpdate);
+    			if(address != null && address.size() > 0){
+    				clientForUpdate.updateAddressExt(address);
+                }
+    		}
+            
+    		//For For modified client page familyDetails    		
+    		final JsonArray familyDetailsArray = object.get("familyDetails").getAsJsonArray();
+    		if(familyDetailsArray != null){
+    			List<FamilyDetails> familyDetails = this.clientExtAssembler.assembleFamilyDetails(familyDetailsArray, clientForUpdate);
+    			if(familyDetails != null){
+    				clientForUpdate.updateFamilyDetails(familyDetails);
+                }
+    		}
+    		
+    		//For For modified client page ClientIdentifierWritePlatformService
+    		this.clientIdentifierWritePlatformService.addClientIdentifierService(clientForUpdate, command);
+    		
+    		//ForFor modified client page Occupation Details
+    		final JsonArray occupationDetailsArray = object.get("cfaOccupations").getAsJsonArray();
+    		if(occupationDetailsArray != null){
+    			List<OccupationDetails> occupationDetails = this.clientExtAssembler.assembleOccupationDetails(occupationDetailsArray, clientForUpdate);
+    			if(occupationDetails != null){
+    				clientForUpdate.updateOccupationDetails(occupationDetails);
+                }
+    		}
+    		
+    		//For For modified client page Nominee Details    		
+    		final JsonArray nomineeDetailsArray = object.get("nomineeDetails").getAsJsonArray();
+    		if(nomineeDetailsArray != null){
+    			List<NomineeDetails> nomineeDetails = this.clientExtAssembler.assembleNomineeDetails(nomineeDetailsArray, clientForUpdate);
+    			if(nomineeDetails != null){
+    				clientForUpdate.updateNomineeDetails(nomineeDetails);
+                }
+    		}
+    		
+    		//For modified client page Co Applicant Details
+    		final JsonArray coClientDataArray = object.get("coClientData").getAsJsonArray();
+    		if(coClientDataArray != null){
+    			List<Coapplicant> coapplicant = this.clientExtAssembler.assembleCoClientDataArray(coClientDataArray, clientForUpdate);
+    			if(coapplicant != null && coapplicant.size() > 0){
+    				clientForUpdate.updateCoapplicant(coapplicant);
+                }
+    		}
+            
+            
 
             if (!changes.isEmpty()) {
                 this.clientRepository.saveAndFlush(clientForUpdate);
