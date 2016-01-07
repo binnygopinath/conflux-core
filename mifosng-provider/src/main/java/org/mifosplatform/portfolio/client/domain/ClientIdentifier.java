@@ -51,17 +51,24 @@ public class ClientIdentifier extends AbstractAuditableCustom<AppUser, Long> {
         //
     }
 
-    private ClientIdentifier(final Client client, final CodeValue documentType, final String documentKey, final String description) {
+    public ClientIdentifier(final Client client, final CodeValue documentType, final String documentKey, final String description) {
         this.client = client;
         this.documentType = documentType;
         this.documentKey = StringUtils.defaultIfEmpty(documentKey, null);
         this.description = StringUtils.defaultIfEmpty(description, null);
-    }
+    }	
+
+    public void update(final Client client, final CodeValue documentType, final String documentKey, final String description) {
+		this.client = client;
+        this.documentType = documentType;
+        this.documentKey = StringUtils.defaultIfEmpty(documentKey, null);
+        this.description = StringUtils.defaultIfEmpty(description, null);
+	}
 
     public void update(final CodeValue documentType) {
         this.documentType = documentType;
     }
-
+    
     public Map<String, Object> update(final JsonCommand command) {
 
         final Map<String, Object> actualChanges = new LinkedHashMap<>(7);
@@ -96,4 +103,9 @@ public class ClientIdentifier extends AbstractAuditableCustom<AppUser, Long> {
     public Long documentTypeId() {
         return this.documentType.getId();
     }
+    
+    public CodeValue getDocumentType() {
+		return documentType;
+	}
+
 }

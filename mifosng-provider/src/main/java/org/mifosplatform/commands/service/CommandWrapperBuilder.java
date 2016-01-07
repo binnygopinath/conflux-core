@@ -2529,4 +2529,12 @@ public class CommandWrapperBuilder {
         this.href = "/provisioningentries/"+entryId;
         return this;
     }
+    
+    public CommandWrapperBuilder createCoClient() {
+        this.actionName = "CREATE";
+        this.entityName = "COCLIENT";
+        this.href = "/coapplicant/template";
+        return this;
+    }
+
 }

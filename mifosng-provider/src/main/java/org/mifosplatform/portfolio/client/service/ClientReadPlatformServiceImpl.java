@@ -12,6 +12,17 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.conflux.client.ext.data.AddressExtData;
+import org.conflux.client.ext.data.ClientDataExt;
+import org.conflux.client.ext.data.CoapplicantDetailsData;
+import org.conflux.client.ext.data.FamilyDetailsExtData;
+import org.conflux.client.ext.data.NomineeDetailsData;
+import org.conflux.client.ext.data.OccupationDetailsData;
+import org.conflux.client.ext.domain.Address;
+import org.conflux.client.ext.domain.FamilyDetails;
+import org.conflux.client.ext.domain.NomineeDetails;
+import org.conflux.client.ext.domain.OccupationDetails;
+import org.conflux.client.ext.service.CoapplicantReadPlatformService;
 import org.joda.time.LocalDate;
 import org.mifosplatform.infrastructure.codes.data.CodeValueData;
 import org.mifosplatform.infrastructure.codes.service.CodeValueReadPlatformService;
@@ -28,9 +39,20 @@ import org.mifosplatform.organisation.office.service.OfficeReadPlatformService;
 import org.mifosplatform.organisation.staff.data.StaffData;
 import org.mifosplatform.organisation.staff.service.StaffReadPlatformService;
 import org.mifosplatform.portfolio.client.api.ClientApiConstants;
+import org.mifosplatform.portfolio.client.data.AgriOccupationDetails;
+import org.mifosplatform.portfolio.client.data.ClientAdditionalDetails;
+import org.mifosplatform.portfolio.client.data.ClientAddress;
+import org.mifosplatform.portfolio.client.data.ClientCFADetails;
 import org.mifosplatform.portfolio.client.data.ClientData;
+import org.mifosplatform.portfolio.client.data.ClientDetailedData;
+import org.mifosplatform.portfolio.client.data.ClientFamilyDetails;
+import org.mifosplatform.portfolio.client.data.ClientIdentifierData;
+import org.mifosplatform.portfolio.client.data.ClientKYCData;
 import org.mifosplatform.portfolio.client.data.ClientTimelineData;
+import org.mifosplatform.portfolio.client.domain.Client;
 import org.mifosplatform.portfolio.client.domain.ClientEnumerations;
+import org.mifosplatform.portfolio.client.domain.ClientIdentifier;
+import org.mifosplatform.portfolio.client.domain.ClientRepositoryWrapper;
 import org.mifosplatform.portfolio.client.domain.ClientStatus;
 import org.mifosplatform.portfolio.client.exception.ClientNotFoundException;
 import org.mifosplatform.portfolio.group.data.GroupGeneralData;
@@ -59,18 +81,25 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
     private final ClientLookupMapper lookupMapper = new ClientLookupMapper();
     private final ClientMembersOfGroupMapper membersOfGroupMapper = new ClientMembersOfGroupMapper();
     private final ParentGroupsMapper clientGroupsMapper = new ParentGroupsMapper();
+    private final ClientRepositoryWrapper clientRepository;
+    private final CoapplicantReadPlatformService coapplicantReadPlatformService;
+
 
     @Autowired
     public ClientReadPlatformServiceImpl(final PlatformSecurityContext context, final RoutingDataSource dataSource,
             final OfficeReadPlatformService officeReadPlatformService, final StaffReadPlatformService staffReadPlatformService,
             final CodeValueReadPlatformService codeValueReadPlatformService,
-            final SavingsProductReadPlatformService savingsProductReadPlatformService) {
+            final SavingsProductReadPlatformService savingsProductReadPlatformService,
+            final ClientRepositoryWrapper clientRepository,
+            final CoapplicantReadPlatformService coapplicantReadPlatformService) {
         this.context = context;
         this.officeReadPlatformService = officeReadPlatformService;
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.staffReadPlatformService = staffReadPlatformService;
         this.codeValueReadPlatformService = codeValueReadPlatformService;
         this.savingsProductReadPlatformService = savingsProductReadPlatformService;
+        this.clientRepository = clientRepository;
+        this.coapplicantReadPlatformService = coapplicantReadPlatformService;
     }
 
     @Override
@@ -667,4 +696,147 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
         return ClientData.template(null, null, null, null, narrations, null, null, clientTypeOptions, clientClassificationOptions);
     }
 
+    
+    
+    @Override
+    public ClientDetailedData retrieveClientDetailedTemplate(final Long officeId, final boolean staffInSelectedOfficeOnly, final Long clientId) {
+        this.context.authenticatedUser();
+
+        ClientData clientBasicDetails = retrieveTemplate(officeId, staffInSelectedOfficeOnly);
+        
+    	final ClientAdditionalDetails additionalDetails = null;
+    	final ClientAddress address = null;
+    	final ClientFamilyDetails familyDetails = null;
+    	final ClientCFADetails cfaDetails = null;
+    	final AgriOccupationDetails agriOccupation = null;
+    	final ClientIdentifierData identifier = null;
+    	final ClientKYCData kycDetails = null;
+    	
+    	Collection<CodeValueData> spouseRelationShip = new ArrayList<>(
+				this.codeValueReadPlatformService
+						.retrieveCodeValuesByCode(ClientApiConstants.SPOUSE_RELATIONSHIP));
+    	
+        Collection<CodeValueData> salutation = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.CLIENT_SALUTATION));
+        
+    	Collection<CodeValueData> maritalStatus = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.MARITAL_STATUS));
+    	
+    	Collection<CodeValueData> profession = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.PROFESSION));
+    	
+    	Collection<CodeValueData> educationQualification = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.EDUCATION_QUALIFICATION));
+    	
+    	Collection<CodeValueData> annualIncome = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.ANNUAL_INCOME));
+    	
+    	Collection<CodeValueData> landHolding = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.LAND_HOLDING));
+    	
+    	Collection<CodeValueData> houseType = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.HOUSE_TYPE));
+    	
+    	Collection<CodeValueData> state = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.STATE));
+    	
+    	Collection<CodeValueData> district = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.DISTRICT));
+    
+    	
+    	Collection<CodeValueData> identityProof = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.IDENTITY_PROOF));
+    	
+    	Collection<CodeValueData> addressProof = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.ADDRESS_PROOF));
+    	
+    	Collection<CodeValueData> familyrelationShip = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.FAMILY_RELATIONSHIP));
+    	
+    	Collection<CodeValueData> familyOccupation = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.FAMILY_OCCUPATION));
+    	
+    	
+    	Collection<CodeValueData> yesOrNo = new ArrayList<>(
+              this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.YES_NO));
+    	
+    	Collection<CodeValueData> cfaOccupation = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.FIN_OCCUPATION));
+    	
+    	Collection<CodeValueData> externalLoanstatus = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.EXTERNALLOAN_STATUS));
+    	
+    	Collection<CodeValueData> addressTypes = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.CLIENT_ADDRESS_TYPE));
+    	
+    	Collection<CodeValueData> presentLoanSourceTypes = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.PRESETLOANSOURCETYPES));
+    	
+    	Collection<CodeValueData> presentLoanPurposeTypes = new ArrayList<>(
+                this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.PRESETLOANPURPOSETYPES));
+    	
+    	Collection<CodeValueData> country = new ArrayList<>(
+    			this.codeValueReadPlatformService.retrieveCodeValuesByCode(ClientApiConstants.COUNTRY));
+    	
+    	
+    	ClientDataExt clientDataExt = null;
+		List<AddressExtData> addressExtData = new ArrayList<>();
+		List<FamilyDetailsExtData> familyDetailsExtData = new ArrayList<>();
+		List<ClientIdentifierData> clientIdentifierData = new ArrayList<>();
+		List<OccupationDetailsData> occupationDetailsDatas = new ArrayList<>();
+		List<NomineeDetailsData> nomineeDetailsData = new ArrayList<>();
+		CoapplicantDetailsData coapplicantDetailsData = null;
+    	if(clientId != null){
+    		final Client client = this.clientRepository
+    				.findOneWithNotFoundDetection(clientId);
+    		if (client != null) {
+    			if(client.clientExt() != null){
+    				clientDataExt = ClientDataExt.formClientDataExt(client.clientExt());
+    			}    			
+    			if(client.addressExt() != null){
+    				for(Address addressExt : client.addressExt()){
+    					addressExtData.add(AddressExtData.formAddressExtData(addressExt));
+    				}
+    			}   
+    			if(client.familyDetails() != null){
+    				for(FamilyDetails familyDetailsExt : client.familyDetails()){
+    					familyDetailsExtData.add(FamilyDetailsExtData.formFamilyDetailsExtData(familyDetailsExt));
+    				}
+    			}
+    			if(client.clientIdentifiers() != null){
+    				for(ClientIdentifier clientIdentifier : client.clientIdentifiers()){
+    					clientIdentifierData.add(ClientIdentifierData.fromData(clientIdentifier));
+    				}
+    			}
+    			if(client.occupationDetails() != null){
+    				for(OccupationDetails occupationDeatails : client.occupationDetails()){
+    					occupationDetailsDatas.add(OccupationDetailsData.formOccupationDetailsData(occupationDeatails));
+    				}
+    			}
+    			if(client.nomineeDetails() != null){
+    				for(NomineeDetails nomineeDetail : client.nomineeDetails()){
+    					nomineeDetailsData.add(NomineeDetailsData.formNomineeDetailsData(nomineeDetail));
+    				}
+    			}
+    			
+    			if(client.coapplicant() != null){
+    				coapplicantDetailsData = this.coapplicantReadPlatformService.retrieveCoapplicantDetailsDataTemplate(client);
+    			}
+    		}
+    	}
+    	
+		return new ClientDetailedData(clientBasicDetails, additionalDetails,
+				address, familyDetails, cfaDetails, agriOccupation, identifier,
+				kycDetails, salutation, maritalStatus, profession,
+				educationQualification, annualIncome, landHolding, houseType,
+				state, district, country ,identityProof, addressProof,
+				familyrelationShip, familyOccupation, yesOrNo, cfaOccupation,
+				externalLoanstatus, addressTypes, presentLoanSourceTypes,
+				presentLoanPurposeTypes, clientDataExt, addressExtData,
+				familyDetailsExtData, clientIdentifierData,
+				occupationDetailsDatas, nomineeDetailsData,coapplicantDetailsData,spouseRelationShip);
+        
+    }
+
+    
 }

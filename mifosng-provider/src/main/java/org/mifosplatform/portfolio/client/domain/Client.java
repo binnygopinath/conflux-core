@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -29,6 +31,12 @@ import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.conflux.client.ext.domain.Address;
+import org.conflux.client.ext.domain.ClientExt;
+import org.conflux.client.ext.domain.Coapplicant;
+import org.conflux.client.ext.domain.FamilyDetails;
+import org.conflux.client.ext.domain.NomineeDetails;
+import org.conflux.client.ext.domain.OccupationDetails;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.joda.time.LocalDate;
@@ -208,6 +216,36 @@ public final class Client extends AbstractPersistable<Long> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_classification_cv_id", nullable = true)
     private CodeValue clientClassification;
+    
+    
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "client", optional = true, orphanRemoval = true)
+    private ClientExt clientExt;
+    
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client", orphanRemoval = true)
+    private List<Address> addressExt;
+    
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client", orphanRemoval = true)
+    private List<FamilyDetails> familyDetails;
+    
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client", orphanRemoval = true)
+    private List<ClientIdentifier> clientIdentifiers;
+    
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client", orphanRemoval = true)
+    private List<OccupationDetails> occupationDetails;
+    
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client", orphanRemoval = true)
+    private List<NomineeDetails> nomineeDetails;
+    
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client", orphanRemoval = true)
+    private List<Coapplicant> coapplicant;
+
 
     public static Client createNew(final AppUser currentUser, final Office clientOffice, final Group clientParentGroup, final Staff staff,
             final SavingsProduct savingsProduct, final CodeValue gender, final CodeValue clientType, final CodeValue clientClassification,
@@ -896,4 +934,109 @@ public final class Client extends AbstractPersistable<Long> {
         this.status = ClientStatus.PENDING.getValue();
 
     }
+    public List<Coapplicant> coapplicant(){
+		return this.coapplicant;
+	}
+    
+    public void updateCoapplicant(final List<Coapplicant> coapplicant) {
+		if(this.coapplicant != null){
+			this.coapplicant.clear();
+			this.coapplicant.addAll(coapplicant);	        
+		}else{
+			this.coapplicant = coapplicant;
+		}
+		for (Coapplicant ca : this.coapplicant) {
+			ca.updateClient(this);
+        }
+	}
+    
+    
+	public void addAddressExt(final List<Address> address) {
+		if(this.addressExt != null){
+			for (Address add : address) {
+				this.addressExt.add(add);
+			}      
+		}else{
+			this.addressExt = address;
+		}
+		for (Address add : this.addressExt) {
+        	add.updateClient(this);
+        }		
+	}
+
+	public ClientExt clientExt() {
+		return this.clientExt;		
+	}
+	
+	public List<Address> addressExt() {
+		return this.addressExt;		
+	}
+	
+	public List<FamilyDetails> familyDetails() {
+		return this.familyDetails;		
+	}
+	
+	public List<ClientIdentifier> clientIdentifiers() {
+		return this.clientIdentifiers;		
+	}
+	
+	public List<OccupationDetails> occupationDetails(){
+		return this.occupationDetails;
+	}
+	
+	public List<NomineeDetails> nomineeDetails(){
+		return this.nomineeDetails;
+	}
+	
+	public void updateClientExt(final ClientExt clientExt) {
+		this.clientExt = clientExt;		
+	}
+	
+	public void updateAddressExt(final List<Address> address) {
+		if(this.addressExt != null){
+			this.addressExt.clear();
+			this.addressExt.addAll(address);	        
+		}else{
+			this.addressExt = address;
+		}
+		for (Address add : this.addressExt) {
+        	add.updateClient(this);
+        }
+	}
+	
+	public void updateFamilyDetails(final List<FamilyDetails> familyDetails) {
+		if(this.familyDetails != null){
+			this.familyDetails.clear();
+			this.familyDetails.addAll(familyDetails);
+		}else{
+			this.familyDetails = familyDetails;
+		}
+        for (FamilyDetails fd : this.familyDetails) {
+        	fd.updateClient(this);
+        }	
+	}
+	
+	public void updateNomineeDetails(final List<NomineeDetails> nomineeDetails) {
+		if(this.nomineeDetails != null){
+			this.nomineeDetails.clear();
+			this.nomineeDetails.addAll(nomineeDetails);
+		}else{
+			this.nomineeDetails = nomineeDetails;
+		}
+        for (NomineeDetails nd : this.nomineeDetails) {
+        	nd.updateClient(this);
+        }	
+	}
+	
+	public void updateOccupationDetails(final List<OccupationDetails> occupationDetails) {
+		if(this.occupationDetails != null){
+			this.occupationDetails.clear();
+			this.occupationDetails.addAll(occupationDetails);
+		}else{
+			this.occupationDetails = occupationDetails;
+		}
+        for (OccupationDetails cd : this.occupationDetails) {
+        	cd.updateClient(this);
+        }	
+	}
 }
