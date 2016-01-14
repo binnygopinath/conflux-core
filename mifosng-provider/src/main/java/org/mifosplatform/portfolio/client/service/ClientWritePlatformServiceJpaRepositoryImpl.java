@@ -16,13 +16,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.conflux.client.ext.domain.Address;
-import org.conflux.client.ext.domain.ClientExt;
-import org.conflux.client.ext.domain.ClientExtAssembler;
-import org.conflux.client.ext.domain.Coapplicant;
-import org.conflux.client.ext.domain.FamilyDetails;
-import org.conflux.client.ext.domain.NomineeDetails;
-import org.conflux.client.ext.domain.OccupationDetails;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -80,6 +73,13 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.conflux.client.ext.domain.Address;
+import com.conflux.client.ext.domain.ClientExt;
+import com.conflux.client.ext.domain.ClientExtAssembler;
+import com.conflux.client.ext.domain.Coapplicant;
+import com.conflux.client.ext.domain.FamilyDetails;
+import com.conflux.client.ext.domain.NomineeDetails;
+import com.conflux.client.ext.domain.OccupationDetails;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -259,9 +259,6 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
                 this.clientRepository.save(newClient);
             }
             
-            
-            
-            
             //For modified Client Page
             final JsonObject object = new JsonParser().parse(command.json()).getAsJsonObject();
             ClientExt clientExt = this.clientExtAssembler.assembleClientExt(command, newClient);
@@ -269,56 +266,70 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
             	newClient.updateClientExt(clientExt);
             }
             
-            //For modified Client Page Address   		
-    		final JsonArray addressArray = object.get("naddress").getAsJsonArray();
-    		if(addressArray != null){
-    			List<Address> address = this.clientExtAssembler.assembleAddress(addressArray, newClient);
-    			if(address != null && address.size() > 0){
-                	newClient.updateAddressExt(address);
-                }
-    		}
+            //For modified Client Page Address
+            if (object.get("address") != null) {
+	    		final JsonArray addressArray = object.get("address").getAsJsonArray();
+	    		if(addressArray != null){
+	    			List<Address> address = this.clientExtAssembler.assembleAddress(addressArray, newClient);
+	    			if(address != null && address.size() > 0){
+	                	newClient.updateAddressExt(address);
+	                }
+	    		}
+            }
             
-    		//For modified Client Page familyDetails    		
-    		final JsonArray familyDetailsArray = object.get("familyDetails").getAsJsonArray();
-    		if(familyDetailsArray != null){
-    			List<FamilyDetails> familyDetails = this.clientExtAssembler.assembleFamilyDetails(familyDetailsArray, newClient);
-    			if(familyDetails != null){
-                	newClient.updateFamilyDetails(familyDetails);
-                }
-    		}
+    		//For modified Client Page familyDetails
+            if (object.get("familyDetails") != null) {
+	    		final JsonArray familyDetailsArray = object.get("familyDetails").getAsJsonArray();
+	    		if(familyDetailsArray != null){
+	    			List<FamilyDetails> familyDetails = this.clientExtAssembler.assembleFamilyDetails(familyDetailsArray, newClient);
+	    			if(familyDetails != null){
+	                	newClient.updateFamilyDetails(familyDetails);
+	                }
+	    		}
+            }
     		
     		//For modified Client Page ClientIdentifierWritePlatformService
     		this.clientIdentifierWritePlatformService.addClientIdentifierService(newClient, command);    		
             
-    		//Occupation Details 
-    		final JsonArray occupationDetailsArray = object.get("cfaOccupations").getAsJsonArray();
-    		if(occupationDetailsArray != null){
-    			List<OccupationDetails> occupationDetails = this.clientExtAssembler.assembleOccupationDetails(occupationDetailsArray, newClient);
-    			if(occupationDetails != null){
-                	newClient.updateOccupationDetails(occupationDetails);
-                }
+    		//Occupation Details
+    		if (object.get("cfaOccupations") != null) {
+	    		final JsonArray occupationDetailsArray = object.get("cfaOccupations").getAsJsonArray();
+	    		if(occupationDetailsArray != null){
+	    			List<OccupationDetails> occupationDetails = this.clientExtAssembler.assembleOccupationDetails(occupationDetailsArray, newClient);
+	    			if(occupationDetails != null){
+	                	newClient.updateOccupationDetails(occupationDetails);
+	                }
+	    		}
     		}
     		
-    		//For modified Client Page Nominee Details    		
-    		final JsonArray nomineeDetailsArray = object.get("nomineeDetails").getAsJsonArray();
-    		if(nomineeDetailsArray != null){
-    			List<NomineeDetails> nomineeDetails = this.clientExtAssembler.assembleNomineeDetails(nomineeDetailsArray, newClient);
-    			if(nomineeDetails != null){
-    				newClient.updateNomineeDetails(nomineeDetails);
-                }
+    		//For modified Client Page Nominee Details
+    		if (object.get("nomineeDetails") != null) {
+	    		final JsonArray nomineeDetailsArray = object.get("nomineeDetails").getAsJsonArray();
+	    		if(nomineeDetailsArray != null){
+	    			List<NomineeDetails> nomineeDetails = this.clientExtAssembler.assembleNomineeDetails(nomineeDetailsArray, newClient);
+	    			if(nomineeDetails != null){
+	    				newClient.updateNomineeDetails(nomineeDetails);
+	                }
+	    		}
     		}
-            
-            
-            
-    	
-
+    		
+    		//For modified client page Co Applicant Details
+    		if (object.get("coClientData") != null) {
+	    		final JsonArray coClientDataArray = object.get("coClientData").getAsJsonArray();
+	    		if(coClientDataArray != null){
+	    			List<Coapplicant> coapplicant = this.clientExtAssembler.assembleCoClientDataArray(coClientDataArray, newClient);
+	    			if(coapplicant != null && coapplicant.size() > 0){
+	    				newClient.updateCoapplicant(coapplicant);
+	                }
+	    		}
+    		}
+                        
             final Locale locale = command.extractLocale();
             final DateTimeFormatter fmt = DateTimeFormat.forPattern(command.dateFormat()).withLocale(locale);
             CommandProcessingResult result = openSavingsAccount(newClient, fmt);
             if (result.getSavingsId() != null) {
                 this.clientRepository.save(newClient);
             }
-
             
             this.clientRepository.save(newClient);
             
@@ -426,51 +437,61 @@ public class ClientWritePlatformServiceJpaRepositoryImpl implements ClientWriteP
             
             //For For modified client page Address
               		
-    		final JsonArray addressArray = object.get("naddress").getAsJsonArray();
-    		if(addressArray != null){
-    			List<Address> address = this.clientExtAssembler.assembleAddress(addressArray, clientForUpdate);
-    			if(address != null && address.size() > 0){
-    				clientForUpdate.updateAddressExt(address);
-                }
-    		}
+            if (object.get("address") != null) {
+    		final JsonArray addressArray = object.get("address").getAsJsonArray();
+				if(addressArray != null){
+					List<Address> address = this.clientExtAssembler.assembleAddress(addressArray, clientForUpdate);
+					if(address != null && address.size() > 0){
+						clientForUpdate.updateAddressExt(address);
+		            }
+				}
+            }
             
     		//For For modified client page familyDetails    		
-    		final JsonArray familyDetailsArray = object.get("familyDetails").getAsJsonArray();
-    		if(familyDetailsArray != null){
-    			List<FamilyDetails> familyDetails = this.clientExtAssembler.assembleFamilyDetails(familyDetailsArray, clientForUpdate);
-    			if(familyDetails != null){
-    				clientForUpdate.updateFamilyDetails(familyDetails);
-                }
-    		}
+            if (object.get("familyDetails") != null) {
+	    		final JsonArray familyDetailsArray = object.get("familyDetails").getAsJsonArray();
+	    		if(familyDetailsArray != null){
+	    			List<FamilyDetails> familyDetails = this.clientExtAssembler.assembleFamilyDetails(familyDetailsArray, clientForUpdate);
+	    			if(familyDetails != null){
+	    				clientForUpdate.updateFamilyDetails(familyDetails);
+	                }
+	    		}
+            }
     		
     		//For For modified client page ClientIdentifierWritePlatformService
     		this.clientIdentifierWritePlatformService.addClientIdentifierService(clientForUpdate, command);
     		
     		//ForFor modified client page Occupation Details
-    		final JsonArray occupationDetailsArray = object.get("cfaOccupations").getAsJsonArray();
-    		if(occupationDetailsArray != null){
-    			List<OccupationDetails> occupationDetails = this.clientExtAssembler.assembleOccupationDetails(occupationDetailsArray, clientForUpdate);
-    			if(occupationDetails != null){
-    				clientForUpdate.updateOccupationDetails(occupationDetails);
-                }
+    		if (object.get("cfaOccupations") != null) {
+	    		final JsonArray occupationDetailsArray = object.get("cfaOccupations").getAsJsonArray();
+	    		if(occupationDetailsArray != null){
+	    			List<OccupationDetails> occupationDetails = this.clientExtAssembler.assembleOccupationDetails(occupationDetailsArray, clientForUpdate);
+	    			if(occupationDetails != null){
+	    				clientForUpdate.updateOccupationDetails(occupationDetails);
+	                }
+	    		}
     		}
     		
     		//For For modified client page Nominee Details    		
-    		final JsonArray nomineeDetailsArray = object.get("nomineeDetails").getAsJsonArray();
-    		if(nomineeDetailsArray != null){
-    			List<NomineeDetails> nomineeDetails = this.clientExtAssembler.assembleNomineeDetails(nomineeDetailsArray, clientForUpdate);
-    			if(nomineeDetails != null){
-    				clientForUpdate.updateNomineeDetails(nomineeDetails);
-                }
+    		if (object.get("nomineeDetails") != null) {
+	    		final JsonArray nomineeDetailsArray = object.get("nomineeDetails").getAsJsonArray();
+	    		if(nomineeDetailsArray != null){
+	    			List<NomineeDetails> nomineeDetails = this.clientExtAssembler.assembleNomineeDetails(nomineeDetailsArray, clientForUpdate);
+	    			if(nomineeDetails != null){
+	    				clientForUpdate.updateNomineeDetails(nomineeDetails);
+	                }
+	    		}
     		}
     		
     		//For modified client page Co Applicant Details
-    		final JsonArray coClientDataArray = object.get("coClientData").getAsJsonArray();
-    		if(coClientDataArray != null){
-    			List<Coapplicant> coapplicant = this.clientExtAssembler.assembleCoClientDataArray(coClientDataArray, clientForUpdate);
-    			if(coapplicant != null && coapplicant.size() > 0){
-    				clientForUpdate.updateCoapplicant(coapplicant);
-                }
+    		if (object.get("coClientData") != null) {
+	    		final JsonArray coClientDataArray = object.get("coClientData").getAsJsonArray();
+	    		if(coClientDataArray != null){
+	    			List<Coapplicant> coapplicant = this.clientExtAssembler.assembleCoClientDataArray(coClientDataArray, clientForUpdate);
+	    			if(coapplicant != null && coapplicant.size() > 0){
+	    				clientForUpdate.updateCoapplicant(coapplicant);
+	                }
+	    		}
     		}
             
             

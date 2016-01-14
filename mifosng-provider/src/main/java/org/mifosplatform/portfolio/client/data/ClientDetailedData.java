@@ -7,12 +7,13 @@ import java.util.Collection;
 import java.util.List;
 
 import org.mifosplatform.infrastructure.codes.data.CodeValueData;
-import org.conflux.client.ext.data.AddressExtData;
-import org.conflux.client.ext.data.ClientDataExt;
-import org.conflux.client.ext.data.CoapplicantDetailsData;
-import org.conflux.client.ext.data.FamilyDetailsExtData;
-import org.conflux.client.ext.data.NomineeDetailsData;
-import org.conflux.client.ext.data.OccupationDetailsData;
+
+import com.conflux.client.ext.data.AddressExtData;
+import com.conflux.client.ext.data.ClientDataExt;
+import com.conflux.client.ext.data.CoapplicantDetailsData;
+import com.conflux.client.ext.data.FamilyDetailsExtData;
+import com.conflux.client.ext.data.NomineeDetailsData;
+import com.conflux.client.ext.data.OccupationDetailsData;
 
 /**
  * @author Srinivas Rao

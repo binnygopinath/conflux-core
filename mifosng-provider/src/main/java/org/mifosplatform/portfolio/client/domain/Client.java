@@ -31,12 +31,6 @@ import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.conflux.client.ext.domain.Address;
-import org.conflux.client.ext.domain.ClientExt;
-import org.conflux.client.ext.domain.Coapplicant;
-import org.conflux.client.ext.domain.FamilyDetails;
-import org.conflux.client.ext.domain.NomineeDetails;
-import org.conflux.client.ext.domain.OccupationDetails;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.joda.time.LocalDate;
@@ -57,6 +51,13 @@ import org.mifosplatform.portfolio.savings.domain.SavingsAccount;
 import org.mifosplatform.portfolio.savings.domain.SavingsProduct;
 import org.mifosplatform.useradministration.domain.AppUser;
 import org.springframework.data.jpa.domain.AbstractPersistable;
+
+import com.conflux.client.ext.domain.Address;
+import com.conflux.client.ext.domain.ClientExt;
+import com.conflux.client.ext.domain.Coapplicant;
+import com.conflux.client.ext.domain.FamilyDetails;
+import com.conflux.client.ext.domain.NomineeDetails;
+import com.conflux.client.ext.domain.OccupationDetails;
 
 @Entity
 @Table(name = "m_client", uniqueConstraints = { @UniqueConstraint(columnNames = { "account_no" }, name = "account_no_UNIQUE"), //

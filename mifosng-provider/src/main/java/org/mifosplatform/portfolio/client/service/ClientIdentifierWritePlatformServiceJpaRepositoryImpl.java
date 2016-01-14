@@ -8,7 +8,6 @@ package org.mifosplatform.portfolio.client.service;
 import java.util.List;
 import java.util.Map;
 
-import org.conflux.client.ext.domain.ClientExtAssembler;
 import org.mifosplatform.infrastructure.codes.domain.CodeValue;
 import org.mifosplatform.infrastructure.codes.domain.CodeValueRepositoryWrapper;
 import org.mifosplatform.infrastructure.codes.exception.CodeValueNotFoundException;
@@ -32,6 +31,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.conflux.client.ext.domain.ClientExtAssembler;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -195,16 +195,18 @@ public class ClientIdentifierWritePlatformServiceJpaRepositoryImpl implements Cl
     @Transactional
   	@Override
   	public List<ClientIdentifier> addClientIdentifierService(final Client client, final JsonCommand command) {
-  		final JsonObject clientIdentifierDataObject = new JsonParser().parse(command.json()).getAsJsonObject();    		
-  		final JsonArray clientIdentifierDataArray = clientIdentifierDataObject.get("clientIdentifierData").getAsJsonArray();
-  		if(clientIdentifierDataArray != null && clientIdentifierDataArray.isJsonArray()){
-  			final List<ClientIdentifier> clientIdentifiers = this.clientExtAssembler.assembleDoumentIdentifiersDetails(clientIdentifierDataArray, client);
-  			if(clientIdentifiers != null && clientIdentifiers.size() > 0){
-  				for(ClientIdentifier clientIdentifier: clientIdentifiers){
-  					this.clientIdentifierRepository.save(clientIdentifier);									
-  				}
-              }
-  			return clientIdentifiers;
+  		final JsonObject clientIdentifierDataObject = new JsonParser().parse(command.json()).getAsJsonObject();
+  		if (clientIdentifierDataObject.get("clientIdentifierData") != null) {
+			final JsonArray clientIdentifierDataArray = clientIdentifierDataObject.get("clientIdentifierData").getAsJsonArray();
+			if(clientIdentifierDataArray != null && clientIdentifierDataArray.isJsonArray()){
+				final List<ClientIdentifier> clientIdentifiers = this.clientExtAssembler.assembleDoumentIdentifiersDetails(clientIdentifierDataArray, client);
+				if(clientIdentifiers != null && clientIdentifiers.size() > 0){
+					for(ClientIdentifier clientIdentifier: clientIdentifiers){
+						this.clientIdentifierRepository.save(clientIdentifier);									
+					}
+		          }
+				return clientIdentifiers;
+			}
   		}
   		return null;
   	}

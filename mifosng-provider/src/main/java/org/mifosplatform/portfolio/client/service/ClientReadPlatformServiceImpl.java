@@ -12,17 +12,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.conflux.client.ext.data.AddressExtData;
-import org.conflux.client.ext.data.ClientDataExt;
-import org.conflux.client.ext.data.CoapplicantDetailsData;
-import org.conflux.client.ext.data.FamilyDetailsExtData;
-import org.conflux.client.ext.data.NomineeDetailsData;
-import org.conflux.client.ext.data.OccupationDetailsData;
-import org.conflux.client.ext.domain.Address;
-import org.conflux.client.ext.domain.FamilyDetails;
-import org.conflux.client.ext.domain.NomineeDetails;
-import org.conflux.client.ext.domain.OccupationDetails;
-import org.conflux.client.ext.service.CoapplicantReadPlatformService;
 import org.joda.time.LocalDate;
 import org.mifosplatform.infrastructure.codes.data.CodeValueData;
 import org.mifosplatform.infrastructure.codes.service.CodeValueReadPlatformService;
@@ -65,6 +54,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import com.conflux.client.ext.data.AddressExtData;
+import com.conflux.client.ext.data.ClientDataExt;
+import com.conflux.client.ext.data.CoapplicantDetailsData;
+import com.conflux.client.ext.data.FamilyDetailsExtData;
+import com.conflux.client.ext.data.NomineeDetailsData;
+import com.conflux.client.ext.data.OccupationDetailsData;
+import com.conflux.client.ext.domain.Address;
+import com.conflux.client.ext.domain.FamilyDetails;
+import com.conflux.client.ext.domain.NomineeDetails;
+import com.conflux.client.ext.domain.OccupationDetails;
+import com.conflux.client.ext.service.CoapplicantReadPlatformService;
 
 @Service
 public class ClientReadPlatformServiceImpl implements ClientReadPlatformService {

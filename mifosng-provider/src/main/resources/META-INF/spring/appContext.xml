@@ -44,7 +44,7 @@
 										  org.mifosplatform.template.service.*,
 										  org.mifosplatform.useradministration.*,
 										  org.mifosplatform.batch,
-										  org.conflux.client.ext.*">
+										  com.conflux.client.ext.*">
 		<context:exclude-filter expression="org.springframework.stereotype.Controller"
 			type="annotation" />
 
@@ -69,7 +69,7 @@
 	<jpa:repositories base-package="org.mifosplatform.mix.domain" />
 	<jpa:repositories base-package="org.mifosplatform.scheduledjobs.domain" />
 	<jpa:repositories base-package="org.mifosplatform.template.domain" />
-	<jpa:repositories base-package="org.conflux.client.ext.domain"/>
+	<jpa:repositories base-package="com.conflux.client.ext.domain"/>
 	
 	<import resource="infrastructure.xml" />
 

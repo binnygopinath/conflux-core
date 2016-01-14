@@ -15,7 +15,7 @@ public class ClientApiConstants {
 
     public static final String CLIENT_RESOURCE_NAME = "client";
     public static final String CLIENT_CHARGES_RESOURCE_NAME = "CLIENTCHARGE";
-    public static final String SPOUSE_RELATIONSHIP=  "spouseRelationShip";
+    public static final String SPOUSE_RELATIONSHIP=  "Spouse/Parent RelationShip";
 
 
     // Client Charge Action Names
@@ -146,34 +146,33 @@ public class ClientApiConstants {
     public static final String staffOptionsParamName = "staffOptions";
     
     
-    //Conflux specific for client ext
-    
-    public static final String CLIENT_SALUTATION = "salutation";
-    public static final String MARITAL_STATUS = "maritalStatus";
-    public static final String PROFESSION = "profession";
-    public static final String EDUCATION_QUALIFICATION = "educationQualification";
-    public static final String ANNUAL_INCOME = "annualIncome";
-    public static final String LAND_HOLDING = "landHolding";
-    public static final String HOUSE_TYPE = "houseType";
-    public static final String STATE = "state";
-    public static final String DISTRICT = "district";
-    public static final String COUNTRY = "country";
-    public static final String IDENTITY_PROOF = "identityProof";
-    public static final String ADDRESS_PROOF = "addressProof";
-    public static final String FAMILY_RELATIONSHIP = "familyrelationShip";
-    public static final String FAMILY_OCCUPATION = "familyOccupation";
+    // Conflux specific for client ext
+    public static final String CLIENT_SALUTATION = "Salutation";
+    public static final String MARITAL_STATUS = "Marital Status";
+    public static final String PROFESSION = "Profession";
+    public static final String EDUCATION_QUALIFICATION = "Educational Qualification";
+    public static final String ANNUAL_INCOME = "Annual Income";
+    public static final String LAND_HOLDING = "Land Holdings";
+    public static final String HOUSE_TYPE = "House Type";
+    public static final String STATE = "State";
+    public static final String DISTRICT = "District";
+    public static final String COUNTRY = "Country";
+    public static final String IDENTITY_PROOF = "Identity Proof";
+    public static final String ADDRESS_PROOF = "Address Proof";
+    public static final String FAMILY_RELATIONSHIP = "Family RelationShip";
+    public static final String FAMILY_OCCUPATION = "Family Occupation";
     public static final String YES_NO = "YesNo";
-    public static final String FIN_OCCUPATION = "cfaOccupation";
-    public static final String EXTERNALLOAN_STATUS = "externalLoanstatus";
-    public static final String CLIENT_ADDRESS_TYPE = "addressType";
-    public static final String PRESETLOANSOURCETYPES = "presentLoanSourceTypes";
-    public static final String PRESETLOANPURPOSETYPES = "presentLoanPurposeTypes";
+    public static final String FIN_OCCUPATION = "Client Financial Activity Occupations";
+    public static final String EXTERNALLOAN_STATUS = "External Loan Status";
+    public static final String CLIENT_ADDRESS_TYPE = "Address Type";
+    public static final String PRESETLOANSOURCETYPES = "Present Loan Source Types";
+    public static final String PRESETLOANPURPOSETYPES = "Present Loan Purpose Types";
     
     
     //For new modified client page 
     public static final String clientExtParamName = "clientExt";
     public static final String familyDetailsParamName = "familyDetails";
-    public static final String naddressParamName = "naddress";
+    public static final String addressParamName = "address";
 
     public static final String clientIdentifierDataParamName = "clientIdentifierData";
     public static final String occupationDetailsParamName = "cfaOccupations";
@@ -186,14 +185,14 @@ public class ClientApiConstants {
                     mobileNoParamName, firstnameParamName, middlenameParamName, lastnameParamName, fullnameParamName, officeIdParamName,
                     activeParamName, activationDateParamName, staffIdParamName, submittedOnDateParamName, savingsProductIdParamName,
                     dateOfBirthParamName, genderIdParamName, clientTypeIdParamName, clientClassificationIdParamName, clientClassificationParamName,CLIENT_TYPE,
-                    clientExtParamName,familyDetailsParamName,naddressParamName,clientIdentifierDataParamName, occupationDetailsParamName,nomineeDetailsParamName));
+                    clientExtParamName,familyDetailsParamName,addressParamName,clientIdentifierDataParamName, occupationDetailsParamName,nomineeDetailsParamName, coClientDataParamName));
 
     public static final Set<String> CLIENT_UPDATE_REQUEST_DATA_PARAMETERS = new HashSet<>(Arrays.asList(localeParamName,officeIdParamName,
             dateFormatParamName, accountNoParamName, externalIdParamName, mobileNoParamName, firstnameParamName, middlenameParamName,
 
     lastnameParamName, fullnameParamName, activeParamName, activationDateParamName, staffIdParamName, savingsProductIdParamName,
             dateOfBirthParamName, genderIdParamName, clientTypeIdParamName, clientClassificationIdParamName, submittedOnDateParamName,
-            clientExtParamName,familyDetailsParamName,naddressParamName,clientIdentifierDataParamName, occupationDetailsParamName,nomineeDetailsParamName,coClientDataParamName));
+            clientExtParamName,familyDetailsParamName,addressParamName,clientIdentifierDataParamName, occupationDetailsParamName,nomineeDetailsParamName,coClientDataParamName));
 
     /**
      * These parameters will match the class level parameters of
