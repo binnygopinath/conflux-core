@@ -21,6 +21,7 @@ import org.mifosplatform.infrastructure.core.api.JsonCommand;
 import org.mifosplatform.infrastructure.core.data.CommandProcessingResult;
 import org.mifosplatform.infrastructure.core.data.CommandProcessingResultBuilder;
 import org.mifosplatform.infrastructure.core.exception.PlatformDataIntegrityException;
+import org.mifosplatform.infrastructure.core.service.DateUtils;
 import org.mifosplatform.infrastructure.security.service.PlatformSecurityContext;
 import org.mifosplatform.organisation.holiday.domain.Holiday;
 import org.mifosplatform.organisation.holiday.domain.HolidayRepositoryWrapper;
@@ -389,7 +390,9 @@ public class LoanRescheduleRequestWritePlatformServiceImpl implements LoanResche
                 for (final LoanRepaymentScheduleInstallment repaymentScheduleInstallment : repaymentScheduleInstallments) {
                     repaymentScheduleInstallment.updateDerivedFields(currency, new LocalDate());
                 }
-
+                
+                //updates maturity date
+                loan.updateLoanScheduleDependentDerivedFields();
                 // update the loan object
                 this.loanRepository.save(loan);
             }
@@ -463,6 +466,7 @@ public class LoanRescheduleRequestWritePlatformServiceImpl implements LoanResche
                             loan.getDisbursementDate().toDate());
                     workingDays = this.workingDaysRepository.findOne();
                     overdurPenaltyWaitPeriod = this.configurationDomainService.retrievePenaltyWaitPeriod();
+                    recalculateFrom =  DateUtils.getLocalDateOfTenant();
                 }
 
                 HolidayDetailDTO holidayDetailDTO = new HolidayDetailDTO(isHolidayEnabled, holidays, workingDays);

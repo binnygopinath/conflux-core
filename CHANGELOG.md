@@ -6,6 +6,11 @@ See VERSIONING (https://github.com/openMF/mifosx/blob/master/VERSIONING.md) for 
 Releases
 ===============
 
+1. 04 Nov 2015 - 15.11.1.RELEASE
+1. 21 Oct 2015 - 15.10.2.RELEASE
+1. 20 Oct 2015 - 15.10.1.RELEASE
+1. 21 Sep 2015 - 15.09.4.RELEASE
+1. 15 Sep 2015 - 15.09.3.RELEASE
 1. 09 Sep 2015 - 15.09.2.RELEASE
 1. 08 Sep 2015 - 15.09.1.RELEASE
 1. 05 Sep 2015 - 15.09.RELEASE
@@ -73,6 +78,92 @@ Releases
 1. 10 April 2013 - 0.11.2.beta
 1. 05 April 2013 - 0.11.1.beta
 1. 05 April 2013 - 0.11.0.beta
+
+15.11.1.RELEASE
+=============
+This release fixes critical issues in Loan Provisioning Feature and add some UI enhancements.
+This release also includes few bug fixes as mentioned below.
+
+Platform & API
+
+New Features & Improvements
+ - [MIFOSX-2313] - All critical issues in Loan Provisioning
+ - [MIFOSX-2303] - Add Product/Branch/Category filtering to Loan Provisioning report
+
+Bugs
+ - [MIFOSX-2320] - Not able to make repayment after second tranche disbursement 
+ - [MIFOSX-2045] - Clarify New Loan Repayment Strategy Wording 
+ - [MIFOSX-2335] - fix removing a charge on a recalculateLoanSchedule
+ - [Mifosx-2334] - Meltdown in advanced accounting...sum of all charges is not equal to the fee charge for a transaction
+ 
+Community-App
+
+ - Localisation updates
+ - [MIFOSX-2308] - Issues in Loan Provisioning Client Side
+ - [MIFOSX-2303] - Add Product/Branch/Category filtering to Loan Provisioning report
+ - [MIFOSX-2309] - By Clicking action not able to select product from "All Products" field in "Create Provisioning Criteria" page
+ - [MIFOSX-2170] - Error message displayed while creating the datatable is not proper
+
+15.10.2.RELEASE
+=============
+This release is made to fix a critical bug in loan provisioning.
+Bugs
+ - [MIFOSX-2307] - Provisioning entries are not generated if tenant have group loans 
+
+15.10.1.RELEASE
+=============
+This release introduces loan loss provisioning feature. 
+Performance improvements to interest recalculation and few more bug fixes are also part of this release.
+
+Platform & API
+
+New Features & Improvements
+ - [MIFOSX-1895] - Loan Provisioning
+ - [MIFOSX-2228] - Performance improvements to interest recalculation
+
+Bugs
+ - [MIFOSX-2271] - no journal Entry on already accrued fee which has been waived 
+ - [MIFOSX-2289] - Journal Entry not created for new transaction when recalculate interest batch job is ran. 
+ - [MIFOSX-851] - Validation of staff status during the client creation, loan creation etc workflow
+ - [CC-18] - Add loan pupose to balance outstanding report
+ 
+Community-App
+ - Localisation updates
+ - [MIFOSX-2081] - Dropdowns are using values directly from API instead of using translation
+ 
+15.09.4.RELEASE
+=============
+This release introduces linkage between loan repayment schedule and transactions. Also few bug fixes related to tranche loans.
+
+Platform & API
+
+New Features & Improvements
+ - [MIFOSX-2227] - Introduce Linkages between Loan repayment schedule and Transactions
+
+Bugs
+ - [MIFOSX-2240] - Charges added while submitting the loan application is not getting displayed after submitting the application for specified due date and Installment charges
+ - [MIFOSX-2258] - Do not allow rescheduling of loans which support interest recalculation and Tranche disbursement
+ - [MIFOSX-2259] - The tranche charge definition should allow only FLAT or PERCENT_OF_DISBURSEMENT_AMOUNT
+
+15.09.3.RELEASE
+=============
+This release adds Loan rescheduling feature and couple of bug fixes on repayments.
+
+Platform & API
+
+New Features & Improvements
+ - [MIFOSX-1523] - Loan rescheduling. https://mifosforge.jira.com/wiki/display/projects/Loan+rescheduling
+
+Bugs
+ - [MIFOSX-2123] - For Equal principal payments advance repayment with interest recalculation is not working as expected
+ - [MIFOSX-2209] - Reversing a repayment on a loan disbursed to a savings account reverses the amount disbursed to the savings account
+
+
+Community-App
+
+New Features & Improvements
+ - [MIFOSX-1523] - Loan rescheduling. https://mifosforge.jira.com/wiki/display/projects/Loan+rescheduling
+ - Localisation updates from https://translatewiki.net.
 
 15.09.2.RELEASE
 =============
